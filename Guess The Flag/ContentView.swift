@@ -14,6 +14,9 @@ struct ContentView: View {
         .shuffled()
    @State private var correctAnswer = Int.random(in: 0...2)
     @State private var score = 0
+    @State private var questionsAnswered = 0
+    @State private var lastAnswer = 0
+    @State private var gameOver = false
     
     var body: some View {
         ZStack {
@@ -39,7 +42,9 @@ struct ContentView: View {
                     
                     ForEach(0..<3) {number in
                         Button {
-                            flagTapped(number)
+                            lastAnswer = number
+                            questionsAnswered += 1
+                            flagTapped()
                         } label: {
                             Image(countries[number])
                                 .renderingMode(.original)
@@ -58,7 +63,7 @@ struct ContentView: View {
                 Spacer()
                 Spacer()
                 
-                Text("Score: \(score)")
+                Text("Score: \(score)/\(questionsAnswered)")
                     .foregroundColor(.white)
                     .font(.title.bold())
                 Spacer()
@@ -67,24 +72,40 @@ struct ContentView: View {
         }.alert(scoreTitle, isPresented: $showingScore) {
             Button("Continue", action: askQuestion)
         } message: {
-            Text("Your score is \(score)")
+            if (lastAnswer != correctAnswer) {
+                Text("That is the flag of \(countries[lastAnswer])")
+            }
+        }
+        .alert("Game Over", isPresented: $gameOver) {
+            Button("New Game", action: reset)
+        } message: {
+            Text("You scored \(score)/8")
         }
     }
     
-    func flagTapped(_ number: Int) {
-        if number == correctAnswer {
+    func flagTapped() {
+        if lastAnswer == correctAnswer {
             scoreTitle = "Correct"
             score += 1
         } else {
             scoreTitle = "Wrong"
         }
-        
-        showingScore = true
+        if (questionsAnswered == 8) {
+            gameOver = true
+        } else {
+            showingScore = true
+        }
     }
     
     func askQuestion() {
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
+    }
+    
+    func reset() {
+        score = 0
+        questionsAnswered = 0
+        askQuestion()
     }
     
     struct ContentView_Previews: PreviewProvider {
