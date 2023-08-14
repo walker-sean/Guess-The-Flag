@@ -17,6 +17,16 @@ struct ContentView: View {
     @State private var questionsAnswered = 0
     @State private var lastAnswer = 0
     @State private var gameOver = false
+    struct FlagImage: View {
+        var country: String
+        
+        var body: some View {
+            Image(country)
+                .renderingMode(.original)
+                .clipShape(Capsule())
+                .shadow(radius: 5)
+        }
+    }
     
     var body: some View {
         ZStack {
@@ -46,10 +56,7 @@ struct ContentView: View {
                             questionsAnswered += 1
                             flagTapped()
                         } label: {
-                            Image(countries[number])
-                                .renderingMode(.original)
-                                .clipShape(Capsule())
-                                .shadow(radius: 5)
+                            FlagImage(country: countries[number])
                         }
                     }
                     
@@ -112,5 +119,11 @@ struct ContentView: View {
         static var previews: some View {
             ContentView()
         }
+    }
+}
+
+struct Previews_ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        /*@START_MENU_TOKEN@*/Text("Hello, World!")/*@END_MENU_TOKEN@*/
     }
 }
