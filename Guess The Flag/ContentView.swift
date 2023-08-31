@@ -10,13 +10,16 @@ import SwiftUI
 struct ContentView: View {
     @State private var showingScore = false
     @State private var scoreTitle = ""
-   @State private var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Nigeria", "Poland", "Russia", "Spain", "UK", "US"]
+    @State private var countries = ["Estonia", "France", "Germany", "Ireland", "Italy", "Nigeria", "Poland", "Russia", "Spain", "UK", "US"]
         .shuffled()
-   @State private var correctAnswer = Int.random(in: 0...2)
+    @State private var correctAnswer = Int.random(in: 0...2)
     @State private var score = 0
     @State private var questionsAnswered = 0
     @State private var lastAnswer = 0
     @State private var gameOver = false
+    @State private var spinAmount = 0.0
+    @State private var fadeButtons = false
+    
     struct FlagImage: View {
         var country: String
         
@@ -53,11 +56,19 @@ struct ContentView: View {
                     ForEach(0..<3) {number in
                         Button {
                             lastAnswer = number
+                            fadeButtons = true
+                                withAnimation {
+                                    spinAmount += 360
+                                }
                             questionsAnswered += 1
                             flagTapped()
                         } label: {
                             FlagImage(country: countries[number])
                         }
+                        .rotation3DEffect(.degrees(lastAnswer == number ? spinAmount : 0), axis: (x: 1, y: 0, z: 0))
+                        .opacity(fadeButtons && (lastAnswer != number) ? 0.25 : 1)
+                        .scaleEffect(fadeButtons && (lastAnswer != number) ? 0.9 : 1)
+                        .animation(.default, value: fadeButtons)
                     }
                     
                 }
@@ -105,7 +116,11 @@ struct ContentView: View {
     }
     
     func askQuestion() {
+        
+            
         countries.shuffle()
+        fadeButtons = false
+        
         correctAnswer = Int.random(in: 0...2)
     }
     
@@ -114,16 +129,10 @@ struct ContentView: View {
         questionsAnswered = 0
         askQuestion()
     }
-    
-    struct ContentView_Previews: PreviewProvider {
-        static var previews: some View {
-            ContentView()
-        }
-    }
 }
 
-struct Previews_ContentView_Previews: PreviewProvider {
+struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        /*@START_MENU_TOKEN@*/Text("Hello, World!")/*@END_MENU_TOKEN@*/
+        ContentView()
     }
 }
