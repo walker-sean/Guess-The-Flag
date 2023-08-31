@@ -65,10 +65,10 @@ struct ContentView: View {
                         } label: {
                             FlagImage(country: countries[number])
                         }
-                        .rotation3DEffect(.degrees(lastAnswer == number ? spinAmount : 0), axis: (x: 1, y: 0, z: 0))
                         .opacity(fadeButtons && (lastAnswer != number) ? 0.25 : 1)
                         .scaleEffect(fadeButtons && (lastAnswer != number) ? 0.9 : 1)
                         .animation(.default, value: fadeButtons)
+                        .rotation3DEffect(.degrees(lastAnswer == number ? spinAmount : 0), axis: (x: 1, y: 0, z: 0))
                     }
                     
                 }
